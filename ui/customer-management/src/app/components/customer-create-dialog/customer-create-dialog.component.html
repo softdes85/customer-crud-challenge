@@ -1,4 +1,3 @@
-
 <h2 mat-dialog-title>{{data.isEditMode ? 'Edit Customer' : 'Create Customer'}}</h2>
 <mat-dialog-content>
     <form [formGroup]="customerForm" novalidate>
@@ -38,6 +37,6 @@
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button (click)="onCancel()">Cancel</button>
-    <button mat-button [disabled]="!customerForm.valid" (click)="onSave()">Save</button>
+    <button mat-raised-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="!customerForm.valid" (click)="onSave()">Save</button>
 </mat-dialog-actions>

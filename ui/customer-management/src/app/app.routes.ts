@@ -5,5 +5,6 @@ import { NgModule } from '@angular/core';
 
 export const routes: Routes = [    
     { path: 'customers', component: CustomersDashboardComponent },
+    { path: 'customers/:id', component: CustomersDashboardComponent },
 ];
 
