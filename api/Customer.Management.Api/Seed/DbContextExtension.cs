@@ -1,6 +1,7 @@
 ﻿using Customers.Management.Repository;
 using System;
 using Customers.Management.Repository.Entities;
+using System.Linq;
 
 namespace Customers.Management.Api.Seed
 {
@@ -8,6 +9,7 @@ namespace Customers.Management.Api.Seed
     {
         public static void SeedData(this CustomerDBContext context)
         {
+           
             if (!context.Customers.Any())
             {
                 for (int i = 1; i <= 20; i++)

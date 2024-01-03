@@ -55,9 +55,9 @@ builder.Services.AddDbContext<CustomerDBContext>(options =>
     switch (databaseProvider)
     {
         case "MySql":
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            //options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             break;
-        case "InMemory":
+        case "InMemoryDb":
             options.UseInMemoryDatabase("InMemoryDb");
             break;
     }
