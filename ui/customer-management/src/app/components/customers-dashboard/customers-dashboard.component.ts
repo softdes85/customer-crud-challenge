@@ -23,31 +23,28 @@ interface FilterValues {
 })
 export class CustomersDashboardComponent {
   displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'actions'];
-  dataSource = new MatTableDataSource<Customer>();
-  pageIndex:number;
-  pageSize:number;
-  length:number;
+  dataSource: Customer[] = [];
+
+  length = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private customerService: CustomersService, public dialog: MatDialog) {
-    this.pageIndex = 0;
-    this.pageSize = 10;
-    this.length = 0;
+
   }
 
   ngAfterViewInit() {
     this.loadCustomers();
-    this.dataSource.paginator = this.paginator;
+    //this.dataSource.paginator = this.paginator;
   }
 
-  loadCustomers(pageIndex: number = 0, pageSize: number = 10) {
-    this.customerService.getAll(pageIndex, pageSize)
+  loadCustomers() {
+    const page = this.paginator ? this.paginator.pageIndex : 0;
+    const pageSize = this.paginator ? this.paginator.pageSize : 10;
+
+    this.customerService.getAll(page, pageSize)
       .subscribe(data => {
-        this.dataSource.data = data.items;
-        
-        this.pageIndex = data.currentPage;
-        this.pageSize = data.pageSize;
+        this.dataSource = data.items;
         this.length = data.totalCount;
       });
   }
@@ -80,7 +77,5 @@ export class CustomersDashboardComponent {
   editCustomer(customer: Customer) {
     this.openDialog(customer);
   }
-  onPageChange(event: any) {   
-    this.loadCustomers(event.pageIndex, event.pageSize);
-  }
+  
 }
