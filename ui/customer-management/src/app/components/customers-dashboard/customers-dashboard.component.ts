@@ -1,7 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import {
+  MatPaginator,
+  MatPaginatorModule,
+  PageEvent,
+} from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { CustomersService } from '../../services/customers-service.service';
 import { Customer } from '../../models/customer';
 import { HttpClientModule } from '@angular/common/http';
@@ -22,26 +27,44 @@ interface FilterValues {
 @Component({
   selector: 'app-customers-dashboard',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, MatTableModule, MatButtonModule, MatPaginatorModule, MatInputModule],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    MatTableModule,
+    MatButtonModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MatIconModule,
+  ],
   templateUrl: './customers-dashboard.component.html',
-  styleUrl: './customers-dashboard.component.scss'
+  styleUrl: './customers-dashboard.component.scss',
 })
 export class CustomersDashboardComponent implements OnInit, OnDestroy {
+  displayedColumns1: string[] = ['position', 'name', 'weight', 'symbol'];
   private subscriptions: Subscription = new Subscription();
-  displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'actions'];
+  displayedColumns: string[] = [
+    'id',
+    'firstName',
+    'lastName',
+    'email',
+    'actions',
+  ];
 
   pageSizeOptions: number[] = [5, 10, 25, 50];
   pageSize = 10;
   pageIndex = 0;
   dataSource: Customer[] = [];
-  selection: Customer | null = new Customer;
+  selection: Customer | null = new Customer();
   length = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private customerService: CustomersService, public dialog: MatDialog, private router: Router, private route: ActivatedRoute) {
-
-  }
+  constructor(
+    private customerService: CustomersService,
+    public dialog: MatDialog,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.subscriptions.add(
@@ -51,7 +74,8 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
 
         // Fetch data based on the updated pagination parameters
         this.loadCustomers();
-      }));
+      })
+    );
   }
   ngAfterViewInit() {
     this.loadSelectedCustomer();
@@ -85,14 +109,16 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
   }
 
   loadCustomers() {
-    this.customerService.getAll(this.pageIndex + 1, this.pageSize)
-      .subscribe(data => {
+    this.customerService
+      .getAll(this.pageIndex + 1, this.pageSize)
+      .subscribe((data) => {
         this.dataSource = data.items;
         this.length = data.totalCount;
       });
   }
 
   onRowClick(row: Customer): void {
+    console.log(row);
     this.saveSelectedCustomer(row);
   }
 
@@ -100,7 +126,7 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
     // Confirm before deletion
     if (confirm(`Are you sure you want to delete ${customer.firstName}?`)) {
       this.customerService.delete(customer.id).subscribe(() => {
-        // 
+        //
         this.selection = null;
         sessionStorage.removeItem('selectedRow');
         this.loadCustomers();
@@ -110,10 +136,10 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
   openDialog(customer?: Customer): void {
     const dialogRef = this.dialog.open(CustomerCreateDialogComponent, {
       width: '250px',
-      data: { customer: customer || {}, isEditMode: !!customer }
+      data: { customer: customer || {}, isEditMode: !!customer },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       this.loadCustomers();
     });
   }
@@ -125,5 +151,4 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
   editCustomer(customer: Customer) {
     this.openDialog(customer);
   }
-
 }

@@ -1,23 +1,29 @@
-table {
-    width: 100%;
-}
+// .vertical-align-cell {
+//   display: flex;
+//   align-items: center; /* Aligns children (content) in the center vertically */
+//   justify-content: flex-start; /* Aligns children to the start horizontally */
+// }
 
-.mat-elevation-z8 {
-    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
-        0 1px 18px 0 rgba(0, 0, 0, 0.12),
-        0 3px 5px -1px rgba(0, 0, 0, 0.20);
-}
+// table {
+//   width: 100%;
+// }
 
-.full-width-table {
-    width: 100%;
-    max-width: 100%;
-    min-width: 100%;
-}
+// // .mat-elevation-z8 {
+// //     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+// //         0 1px 18px 0 rgba(0, 0, 0, 0.12),
+// //         0 3px 5px -1px rgba(0, 0, 0, 0.20);
+// // }
+
+// .full-width-table {
+//   width: 100%;
+//   max-width: 100%;
+//   min-width: 100%;
+// }
 
 .selected-row {
-    background-color: #cce5ff;
+  background-color: #cce5ff;
 }
-  
-.custom-height {
-   height: 38px;
-  }
+
+// // .custom-height {
+// //    height: 38px;
+// //   }
