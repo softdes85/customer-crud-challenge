@@ -18,6 +18,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// add cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://localhost:4200") // Angular app's origin
+                          .AllowAnyHeader()
+                          .AllowAnyMethod());
+});
+
+
 // regisgter db
 builder.Services.AddDbContext<CustomerDBContext>(options =>
     options.UseInMemoryDatabase("InMemoryDb"));
@@ -48,6 +58,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowSpecificOrigin"); // Apply CORS policy
 
 app.UseHttpsRedirection();
 
