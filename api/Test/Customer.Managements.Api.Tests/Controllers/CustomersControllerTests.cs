@@ -59,7 +59,7 @@ namespace Customers.Management.Api.Tests.Controllers
                        .ReturnsAsync(totalRecords);
 
             mockMapper.Setup(m => m.Map<IEnumerable<CustomerDto>>(It.IsAny<IEnumerable<Customer>>()))
-                      .Returns((IEnumerable<Customer> src) => src.Select(c => new CustomerDto { /* map properties */ }));
+                      .Returns((IEnumerable<Customer> src) => src.Select(c => new CustomerDto { }));
 
             var controller = new CustomersController(mockService.Object, mockMapper.Object);
 
