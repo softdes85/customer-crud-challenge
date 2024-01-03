@@ -1,10 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { CustomersService } from '../../services/customers-service.service';
 import { Customer } from '../../models/customer';
 import { HttpClientModule } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { CustomerCreateDialogComponent } from '../customer-create-dialog/customer-create-dialog.component';
 
 interface FilterValues {
   firstName: string;
@@ -22,38 +24,35 @@ interface FilterValues {
 export class CustomersDashboardComponent {
   displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'actions'];
   dataSource = new MatTableDataSource<Customer>();
-  filterValues: FilterValues = { firstName: '', lastName: '', email: '' };
+  pageIndex:number;
+  pageSize:number;
+  length:number;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private customerService: CustomersService) {
-    this.loadCustomers();
+  constructor(private customerService: CustomersService, public dialog: MatDialog) {
+    this.pageIndex = 0;
+    this.pageSize = 10;
+    this.length = 0;
   }
 
   ngAfterViewInit() {
-
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
-    }
+    this.loadCustomers();
+    this.dataSource.paginator = this.paginator;
   }
 
-  loadCustomers() {
-    this.customerService.getAll() 
-      .subscribe(data => this.dataSource.data = data.items);
+  loadCustomers(pageIndex: number = 0, pageSize: number = 10) {
+    this.customerService.getAll(pageIndex, pageSize)
+      .subscribe(data => {
+        this.dataSource.data = data.items;
+        
+        this.pageIndex = data.currentPage;
+        this.pageSize = data.pageSize;
+        this.length = data.totalCount;
+      });
   }
 
-  applyFilter(event: Event, filterKey: keyof FilterValues) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.filterValues[filterKey] = filterValue.trim().toLowerCase();
-    this.dataSource.filter = JSON.stringify(this.filterValues);
-  }
-  viewCustomer(customer: Customer) {
-    // Handle the view action (e.g., open a dialog or navigate to a detail view)
-  }
 
-  editCustomer(customer: Customer) {
-    // Handle the edit action (e.g., open an edit form in a dialog)
-  }
 
   deleteCustomer(customer: Customer) {
     // Confirm before deletion
@@ -62,5 +61,26 @@ export class CustomersDashboardComponent {
         this.loadCustomers();
       });
     }
+  }
+  openDialog(customer?: Customer): void {
+    const dialogRef = this.dialog.open(CustomerCreateDialogComponent, {
+      width: '250px',
+      data: { customer: customer || {}, isEditMode: !!customer }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle the result, refresh data if needed
+    });
+  }
+
+  createCustomer() {
+    this.openDialog();
+  }
+
+  editCustomer(customer: Customer) {
+    this.openDialog(customer);
+  }
+  onPageChange(event: any) {   
+    this.loadCustomers(event.pageIndex, event.pageSize);
   }
 }

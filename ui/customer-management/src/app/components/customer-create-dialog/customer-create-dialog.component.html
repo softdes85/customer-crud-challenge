@@ -1,1 +1,43 @@
-<p>customer-create-dialog works!</p>
+
+<h2 mat-dialog-title>{{data.isEditMode ? 'Edit Customer' : 'Create Customer'}}</h2>
+<mat-dialog-content>
+    <form [formGroup]="customerForm" novalidate>
+        <mat-form-field>
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName">
+            <mat-error *ngIf="customerForm.controls['firstName'].hasError('required')">
+                First Name is required
+            </mat-error>
+            <mat-error *ngIf="customerForm.controls['firstName'].hasError('maxlength')">
+                First Name cannot be longer than 50 characters
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName">
+            <mat-error *ngIf="customerForm.controls['lastName'].hasError('required')">
+                First Name is required
+            </mat-error>
+            <mat-error *ngIf="customerForm.controls['lastName'].hasError('maxlength')">
+                First Name cannot be longer than 50 characters
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email">
+            <mat-error *ngIf="customerForm.controls['email'].hasError('required')">
+                Email is required
+            </mat-error>
+            <mat-error *ngIf="customerForm.controls['email'].hasError('email')">
+                Please enter a valid email address
+            </mat-error>
+        </mat-form-field>
+
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-button [disabled]="!customerForm.valid" (click)="onSave()">Save</button>
+</mat-dialog-actions>
