@@ -5,7 +5,7 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row mb-2">
     <div class="col-sm-12">
         <div class="mat-elevation-z8 m-10">
 
@@ -66,5 +66,10 @@
                 [pageIndex]="pageIndex" showFirstLastButtons [length]="length"
                 (page)="onPageChange($event)"></mat-paginator>
         </div>
+    </div>
+</div>
+<div class="row m-10" *ngIf="selection">
+    <div class="col-12">
+        <app-customer-view></app-customer-view>
     </div>
 </div>

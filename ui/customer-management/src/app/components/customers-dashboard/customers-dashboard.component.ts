@@ -17,12 +17,8 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-
-interface FilterValues {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
+import { CustomerStateManagementService } from '../../services/customer-state-management.service';
+import { CustomerViewComponent } from '../customer-view/customer-view.component';
 
 @Component({
   selector: 'app-customers-dashboard',
@@ -35,6 +31,7 @@ interface FilterValues {
     MatPaginatorModule,
     MatInputModule,
     MatIconModule,
+    CustomerViewComponent,
   ],
   templateUrl: './customers-dashboard.component.html',
   styleUrl: './customers-dashboard.component.scss',
@@ -61,10 +58,20 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private customerService: CustomersService,
+    private customerStateManagermentService: CustomerStateManagementService,
     public dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    this.loadSelectedCustomer();
+    this.subscriptions.add(
+      this.customerStateManagermentService.selectedCustomer$.subscribe(
+        (customer) => {
+          this.saveSelectedCustomer(customer);
+        }
+      )
+    );
+  }
 
   ngOnInit(): void {
     this.subscriptions.add(
@@ -78,7 +85,6 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
     );
   }
   ngAfterViewInit() {
-    this.loadSelectedCustomer();
     this.loadCustomers();
   }
   ngOnDestroy(): void {
@@ -100,12 +106,18 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
   loadSelectedCustomer() {
     const storedSelection = sessionStorage.getItem('selectedRow');
     if (storedSelection) {
-      this.selection = JSON.parse(storedSelection);
+      this.customerStateManagermentService.selectCustomer(
+        JSON.parse(storedSelection)
+      );
     }
   }
-  saveSelectedCustomer(row: Customer): void {
+  saveSelectedCustomer(row: any): void {
     this.selection = row;
-    sessionStorage.setItem('selectedRow', JSON.stringify(this.selection));
+    if (this.selection) {
+      sessionStorage.setItem('selectedRow', JSON.stringify(this.selection));
+    } else {
+      sessionStorage.removeItem('selectedRow');
+    }
   }
 
   loadCustomers() {
@@ -118,8 +130,7 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
   }
 
   onRowClick(row: Customer): void {
-    console.log(row);
-    this.saveSelectedCustomer(row);
+    this.customerStateManagermentService.selectCustomer(row);
   }
 
   deleteCustomer(customer: Customer) {
@@ -127,8 +138,7 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
     if (confirm(`Are you sure you want to delete ${customer.firstName}?`)) {
       this.customerService.delete(customer.id).subscribe(() => {
         //
-        this.selection = null;
-        sessionStorage.removeItem('selectedRow');
+        this.customerStateManagermentService.clearSelectedCustomer();
         this.loadCustomers();
       });
     }
@@ -140,6 +150,9 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      if (customer)
+        this.customerStateManagermentService.selectCustomer(customer);
+      else this.customerStateManagermentService.clearSelectedCustomer();
       this.loadCustomers();
     });
   }
@@ -149,6 +162,7 @@ export class CustomersDashboardComponent implements OnInit, OnDestroy {
   }
 
   editCustomer(customer: Customer) {
+    console.log(customer);
     this.openDialog(customer);
   }
 }

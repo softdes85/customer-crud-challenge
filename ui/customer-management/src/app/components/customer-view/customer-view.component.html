@@ -1,0 +1,13 @@
+<mat-card class="example-card">
+    <mat-card-header>
+
+        <mat-card-title>{{customer?.firstName}}</mat-card-title>
+        <mat-card-subtitle>{{customer?.lastName}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <p>
+            This is a customer: {{customer?.firstName}} {{customer?.lastName}}
+            <a href="mailto:{{customer?.email}}">{{customer?.email}}</a>
+        </p>
+    </mat-card-content>
+</mat-card>

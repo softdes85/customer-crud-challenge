@@ -3,7 +3,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { CustomersService } from '../../services/customers-service.service';
 import { Customer } from '../../models/customer';
 import { CommonModule } from '@angular/common';
@@ -16,10 +21,10 @@ import { CommonModule } from '@angular/common';
     MatDialogModule,
     MatButtonModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './customer-create-dialog.component.html',
-  styleUrl: './customer-create-dialog.component.scss'
+  styleUrl: './customer-create-dialog.component.scss',
 })
 export class CustomerCreateDialogComponent {
   customerForm: FormGroup;
@@ -30,13 +35,13 @@ export class CustomerCreateDialogComponent {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder
   ) {
-
     //this.isEditMode = data && data.customer != null;
     // Initialize form
     this.customerForm = this.fb.group({
+      id: [0],
       firstName: ['', [Validators.required, Validators.maxLength(50)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
     });
 
     if (this.data.isEditMode) {
@@ -57,11 +62,13 @@ export class CustomerCreateDialogComponent {
         },
         complete: () => {
           console.log('Customer creation completed');
-        }
+        },
       };
 
       if (this.data.isEditMode) {
-        this.customerService.update(this.data.customer.id, customerData).subscribe(observer);
+        this.customerService
+          .update(this.data.customer.id, customerData)
+          .subscribe(observer);
       } else {
         this.customerService.create(customerData).subscribe(observer);
       }
